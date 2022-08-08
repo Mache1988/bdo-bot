@@ -15,9 +15,10 @@ export interface t_phase {
   minted_tokens: null | Big;
   distribution_starting_from: null | Big;
 }
+export type t_wanted = { token_id: Big; level: Big };
 export interface t_reward {
-  wanted: { token_id: Big; level: Big }[];
-  bonuz: { token_id: Big; level: Big }[];
+  wanted: t_wanted[];
+  bonuz: t_wanted[];
   expire_on: Big;
   reward_ratio: Big;
   bonuz_jailed: Big[];
@@ -48,6 +49,7 @@ export interface t_salez_storage {
   rewards_list: MichelsonMap<Big, t_reward>;
   next_reward_id: Big;
   jailed: MichelsonMap<Big, null>;
+  eaten: MichelsonMap<Big, null>;
   ledger: BigMapAbstraction;
   metadata: BigMapAbstraction;
   supply: BigMapAbstraction;
@@ -119,3 +121,8 @@ export interface t_metadata {
     };
   };
 }
+
+export type t_extra = {
+  fa2_storage: t_fa2_storage | null;
+  salez_storage: t_salez_storage | null;
+};

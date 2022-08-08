@@ -40,16 +40,6 @@ export const tezosStart = () => {
   const tezos = new TezosToolkit(RPC_NODE);
   tezos.setPackerProvider(new MichelCodecPacker());
   return tezos;
-  //tezos.addExtension(new Tzip16Module());
-  /*const beacon = new BeaconWallet({
-      name: "FINGERZ TZ - XPENDING MACHINE",
-      preferredNetwork: network.type,
-    });
-    tezos.setWalletProvider(beacon);
-    return {
-      tezos,
-      beacon,
-    };*/
 };
 export const getFA2Storage = async (
   tezos: TezosToolkit,
@@ -91,24 +81,24 @@ export const queryIPFS = async (
   try {
     const query_token_metadata =
       await fa2_storage.token_metadata.get<t_token_metadata>(token_id);
-    console.log(query_token_metadata);
+    //console.log(query_token_metadata);
     if (query_token_metadata) {
       const query_ipfs = query_token_metadata.token_info.get("");
-      console.log(query_ipfs);
+      //console.log(query_ipfs);
       if (query_ipfs) {
         const query_metadata: string = Object.values(
           unpackDataBytes({ bytes: query_ipfs }, { prim: "string" })
         )[0] as string;
-        console.log("token_metadata_uri: ", query_metadata);
+        //console.log("token_metadata_uri: ", query_metadata);
         const metadata = await axios.get<t_metadata>(
           query_metadata.replace("ipfs://", "https://gateway.ipfs.io/ipfs/")
         );
-        console.log("token_metadata: ", metadata);
+        //console.log("token_metadata: ", metadata);
         const artifact_uri = metadata.data.artifactUri.replace(
           "ipfs://",
           "https://gateway.ipfs.io/ipfs/"
         );
-        console.log(artifact_uri);
+        //console.log(artifact_uri);
         uri = artifact_uri;
       }
     }

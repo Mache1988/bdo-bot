@@ -1,11 +1,8 @@
 import { CommandInteraction } from "discord.js";
-import { t_fa2_storage } from "../api/types";
+import { t_extra } from "../api/types";
 
 export interface event {
   name: string;
   once: boolean;
-  execute: (
-    interacetion: CommandInteraction,
-    fa2_storage?: t_fa2_storage | null
-  ) => void;
+  execute: (interacetion: CommandInteraction, extra?: t_extra) => void;
 }
