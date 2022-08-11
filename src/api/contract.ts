@@ -35,7 +35,7 @@ export const FA2_CONTRACT_ADDRESS = DEV
 export const network: Network = DEV
   ? { type: NetworkType.JAKARTANET }
   : { type: NetworkType.MAINNET };
-
+export const IPFS_GATEWAY = "https://gateway.ipfs.io/ipfs/";
 export const tezosStart = () => {
   const tezos = new TezosToolkit(RPC_NODE);
   tezos.setPackerProvider(new MichelCodecPacker());
@@ -47,7 +47,7 @@ export const getFA2Storage = async (
 ) => {
   let fa2_storage: t_fa2_storage | null = null;
   try {
-    console.log("Getting contract");
+    console.log("Getting FA2 contract data");
 
     const query_contract = await tezos.contract.at(FA2_CONTRACT_ADDRESS);
     fa2_storage = await query_contract.storage<t_fa2_storage>();
@@ -63,7 +63,7 @@ export const getSalezStorage = async (
 ) => {
   let sale_storage: t_salez_storage | null = null;
   try {
-    console.log("Getting contract");
+    console.log("Getting SALEZ contract data");
     const query_contract = await tezos.contract.at(SALE_CONTRACT_ADDRESS);
     sale_storage = await query_contract.storage<t_salez_storage>();
   } catch (error) {
@@ -79,6 +79,9 @@ export const queryIPFS = async (
 ) => {
   let uri = "";
   try {
+    console.log(
+      `Fetching assets for token #${token_id} from IPFS at gateway: ${IPFS_GATEWAY}`
+    );
     const query_token_metadata =
       await fa2_storage.token_metadata.get<t_token_metadata>(token_id);
     //console.log(query_token_metadata);
@@ -91,12 +94,12 @@ export const queryIPFS = async (
         )[0] as string;
         //console.log("token_metadata_uri: ", query_metadata);
         const metadata = await axios.get<t_metadata>(
-          query_metadata.replace("ipfs://", "https://gateway.ipfs.io/ipfs/")
+          query_metadata.replace("ipfs://", IPFS_GATEWAY)
         );
         //console.log("token_metadata: ", metadata);
         const artifact_uri = metadata.data.artifactUri.replace(
           "ipfs://",
-          "https://gateway.ipfs.io/ipfs/"
+          IPFS_GATEWAY
         );
         //console.log(artifact_uri);
         uri = artifact_uri;

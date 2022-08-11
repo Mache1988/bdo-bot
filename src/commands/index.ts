@@ -1,8 +1,10 @@
 import { Collection } from "discord.js";
-import random from "./wanted";
+import Wanted from "./wanted";
 import { command } from "./types";
+import Holders from "./holders";
 
 const commands = new Collection<string, command>();
-commands.set(random.data.name, random);
+commands.set(Wanted.data.name, Wanted);
+commands.set(Holders.data.name, Holders);
 
 export default commands;

@@ -6,7 +6,7 @@ import {
 import { command } from "../types";
 import { BONUZ_COLOR, getWantedList, WANTED_COLOR } from "./api";
 
-const random: command = {
+const Wanted: command = {
   data: new SlashCommandBuilder()
     .setName("wanted")
     .setDescription("Replies with a random generated wanted list")
@@ -76,7 +76,7 @@ const random: command = {
           value: black_list.map((b) => `#${b}`).join(", "),
         }
       );
-    await interaction.followUp("WORKING...");
+
     const wanted_header = new EmbedBuilder()
       .setColor(WANTED_COLOR)
       .setTitle("WANTED TARGETS");
@@ -86,6 +86,7 @@ const random: command = {
 
     try {
       await interaction.reply({ embeds: [header] });
+      await interaction.followUp("WORKING...");
       if (extra) {
         const embeds = await getWantedList(
           interaction,
@@ -110,4 +111,4 @@ const random: command = {
     }
   },
 };
-export default random;
+export default Wanted;

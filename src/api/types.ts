@@ -1,4 +1,8 @@
-import { BigMapAbstraction, MichelsonMap } from "@taquito/taquito";
+import {
+  BigMapAbstraction,
+  MichelsonMap,
+  TezosToolkit,
+} from "@taquito/taquito";
 import Big from "big.js";
 export type _error = { data: { with: { string: string } }[] };
 export interface t_phase {
@@ -123,6 +127,5 @@ export interface t_metadata {
 }
 
 export type t_extra = {
-  fa2_storage: t_fa2_storage | null;
-  salez_storage: t_salez_storage | null;
+  tezos: TezosToolkit;
 };

@@ -1,43 +1,10 @@
 import axios from "axios";
 import { CommandInteraction, EmbedBuilder } from "discord.js";
-import { queryIPFS } from "../../api/contract";
+import { getFA2Storage, getSalezStorage, queryIPFS } from "../../api/contract";
 import { t_extra, t_fa2_storage } from "../../api/types";
 export const WANTED_COLOR = 0xfcba03;
 export const BONUZ_COLOR = 0xfc3503;
-export const getWanted = async (
-  interaction: CommandInteraction,
-  extra?: t_extra
-) => {
-  let embed: EmbedBuilder | null = null;
-  try {
-    if (extra) {
-      const fa2_storage = extra.fa2_storage;
-      const _from = interaction.options.get("from")?.value as number;
-      const _to = interaction.options.get("to")?.value as number;
-      const result = Math.floor(Math.random() * (_to - _from + 1)) + _from;
-      let wanted_uri = "";
-      if (fa2_storage) {
-        wanted_uri = await queryIPFS(fa2_storage, result);
-      }
-      embed = new EmbedBuilder()
-        .setColor(0x0099ff)
-        .setTitle("WANTED FINGERZ")
 
-        .setDescription("Mission generator")
-        .setThumbnail("https://nftfingerz.xyz/static/media/wanted.8110b4f8.png")
-        .addFields(
-          { name: "From token ID", value: `#${_from}` },
-          { name: "To token ID", value: `#${_to}` },
-          { name: "Wanted token ID", value: `#${result}`, inline: true }
-        )
-        .setImage(wanted_uri)
-        .setTimestamp();
-    }
-  } catch (error) {
-    console.log(error);
-  }
-  return embed;
-};
 type t_params = {
   _from: number;
   _to: number;
@@ -55,21 +22,23 @@ export const getWantedList = async (
   let bonuz_embeds: EmbedBuilder[] = [];
   try {
     if (extra) {
-      if (extra.fa2_storage && extra.salez_storage) {
+      const fa2_storage = await getFA2Storage(extra.tezos);
+      const salez_storage = await getSalezStorage(extra.tezos);
+      if (fa2_storage && salez_storage) {
         const query_time = await axios.get<{ unixtime: number }>(
           "https://worldtimeapi.org/api/timezone/America/Argentina/Salta"
         );
         const { unixtime } = query_time.data;
         const jailed: number[] = [];
-        for (const inJail of extra.salez_storage.jailed.keys()) {
+        for (const inJail of salez_storage.jailed.keys()) {
           jailed.push(inJail.toNumber());
         }
         const eaten: number[] = [];
-        for (const inMine of extra.salez_storage.eaten.keys()) {
+        for (const inMine of salez_storage.eaten.keys()) {
           eaten.push(inMine.toNumber());
         }
         const wanted: number[] = [];
-        for (const mission of extra.salez_storage.rewards_list.values()) {
+        for (const mission of salez_storage.rewards_list.values()) {
           if (mission.expire_on.toNumber() > unixtime && !mission.complete) {
             for (const runner of mission.wanted) {
               wanted.push(runner.token_id.toNumber());
@@ -102,7 +71,7 @@ export const getWantedList = async (
         console.log("Wanted", team.wanted);
         wanted_embeds = await Promise.all(
           team.wanted.map((w) => {
-            return styledWanted(extra.fa2_storage, w.token_id);
+            return styledWanted(fa2_storage, w.token_id);
           })
         );
         wanted_embeds.push(
@@ -111,11 +80,12 @@ export const getWantedList = async (
             .setTitle("TARGET LIST")
             .setDescription(JSON.stringify(team.wanted))
         );
+        console.log("Wanted Embeds Ready");
         const bonuz = randomize(_bonuz, team.white_listed, true, _offset);
         console.log("Bonuz", bonuz.wanted);
         bonuz_embeds = await Promise.all(
           bonuz.wanted.map((w) => {
-            return styledBonuz(extra.fa2_storage, w.token_id, w.level);
+            return styledBonuz(fa2_storage, w.token_id, w.level);
           })
         );
         bonuz_embeds.push(
@@ -124,6 +94,7 @@ export const getWantedList = async (
             .setTitle("TARGET LIST")
             .setDescription(JSON.stringify(bonuz.wanted))
         );
+        console.log("Bonuz Embeds Ready");
       }
     }
   } catch (error) {
