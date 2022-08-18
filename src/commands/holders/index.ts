@@ -1,8 +1,4 @@
-import {
-  CommandInteraction,
-  EmbedBuilder,
-  SlashCommandBuilder,
-} from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { command } from "../types";
 import { getHolders } from "./api";
 
@@ -29,7 +25,7 @@ const Holders: command = {
         .setDescription("Return JSON for Mint coins in Dapp tool")
         .setRequired(true)
     ),
-  execute: async (interaction: CommandInteraction, extra) => {
+  execute: async (interaction, extra) => {
     const _from = interaction.options.get("from")?.value as number;
     const _to = interaction.options.get("to")?.value as number;
     const _dev = interaction.options.get("dev")?.value as boolean;

@@ -4,7 +4,7 @@ import { event } from "./types";
 const onInteractionCreate: event = {
   name: "interactionCreate",
   once: false,
-  execute: async (interaction, fa2_storage) => {
+  execute: async (interaction, extra) => {
     if (!interaction.isChatInputCommand()) return;
 
     const command = commands.get(interaction.commandName);
@@ -12,7 +12,7 @@ const onInteractionCreate: event = {
     if (!command) return;
 
     try {
-      await command.execute(interaction, fa2_storage);
+      await command.execute(interaction, extra);
     } catch (error) {
       console.error(error);
       await interaction.reply({
