@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import moment from "moment";
 import events from "../events";
-import { MongoCx } from "../lib/mongodb";
+import { MongoCx } from "../db/mongodb";
 import CustomizeEmbed from "./customizeEmbed";
 import {
   CalendarEvents,
@@ -18,35 +18,13 @@ import {
   CalendarEventNoID,
 } from "./types";
 
-class _Calendar {
+class CalendarBot {
   events: CalendarEvents = {};
   interval = 1000 * 60;
   unSuscribe: NodeJS.Timer | null = null;
   client: Client | null = null;
   status = "off";
-  constructor() {
-    try {
-      const client = new Client({
-        intents: [
-          GatewayIntentBits.Guilds,
-          GatewayIntentBits.GuildMembers,
-          GatewayIntentBits.DirectMessages,
-        ],
-      });
-      events.forEach((event) => {
-        if (event.once) {
-          client.once(event.name, (interaction) => event.execute(interaction));
-        } else {
-          client.on(event.name, (interaction) => event.execute(interaction));
-        }
-      });
-      client.login(process.env.TOKEN);
-      this.client = client;
-      this.start();
-    } catch (error) {
-      console.log((error as Error).message);
-    }
-  }
+
   updateInterval(interval: number) {
     this.interval = interval;
   }
@@ -123,6 +101,29 @@ class _Calendar {
       } catch (error) {
         console.log((error as Error).message);
       }
+    }
+  }
+  async init() {
+    try {
+      const client = new Client({
+        intents: [
+          GatewayIntentBits.Guilds,
+          GatewayIntentBits.GuildMembers,
+          GatewayIntentBits.DirectMessages,
+        ],
+      });
+      events.forEach((event) => {
+        if (event.once) {
+          client.once(event.name, (interaction) => event.execute(interaction));
+        } else {
+          client.on(event.name, (interaction) => event.execute(interaction));
+        }
+      });
+      this.client = client;
+      await client.login(process.env.TOKEN);
+      this.start();
+    } catch (error) {
+      console.log((error as Error).message);
     }
   }
 
@@ -335,4 +336,4 @@ class _Calendar {
   }
 }
 
-export const calendar = new _Calendar();
+export const calendar = new CalendarBot();

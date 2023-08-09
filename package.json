@@ -1,9 +1,9 @@
 {
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "deploy": "ts-node src/deployCommands.ts",
-    "reset": "ts-node src/resetCommands.ts",
-    "delete": "ts-node src/deleteCommand.ts"
+    "start": "ts-node lib/index.ts",
+    "deploy": "ts-node lib/deployCommands.ts",
+    "reset": "ts-node lib/resetCommands.ts",
+    "delete": "ts-node lib/deleteCommand.ts"
   },
   "devDependencies": {
     "@types/node": "^17.0.23",

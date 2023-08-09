@@ -1,3 +1,3 @@
 import { calendar } from "./calendar";
 
-console.log(calendar.status);
+calendar.init();
