@@ -19,6 +19,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.1.0",
     "@discordjs/rest": "^1.0.1",
+    "@vercel/node": "^2.15.9",
     "axios": "^0.27.2",
     "discord-api-types": "^0.37.1",
     "discord.js": "^14.12.1",

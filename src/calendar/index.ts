@@ -1,10 +1,13 @@
+import "dotenv/config";
 import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
   Client,
+  GatewayIntentBits,
 } from "discord.js";
 import moment from "moment";
+import events from "../events";
 import { MongoCx } from "../lib/mongodb";
 import CustomizeEmbed from "./customizeEmbed";
 import {
@@ -20,7 +23,30 @@ class _Calendar {
   interval = 1000 * 60;
   unSuscribe: NodeJS.Timer | null = null;
   client: Client | null = null;
-
+  status = "off";
+  constructor() {
+    try {
+      const client = new Client({
+        intents: [
+          GatewayIntentBits.Guilds,
+          GatewayIntentBits.GuildMembers,
+          GatewayIntentBits.DirectMessages,
+        ],
+      });
+      events.forEach((event) => {
+        if (event.once) {
+          client.once(event.name, (interaction) => event.execute(interaction));
+        } else {
+          client.on(event.name, (interaction) => event.execute(interaction));
+        }
+      });
+      client.login(process.env.TOKEN);
+      this.client = client;
+      this.start();
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  }
   updateInterval(interval: number) {
     this.interval = interval;
   }
@@ -100,8 +126,7 @@ class _Calendar {
     }
   }
 
-  async start(client: Client) {
-    this.client = client;
+  async start() {
     try {
       const events = await (await MongoCx.events).find({}).toArray();
       console.log(`[${events.length}] Events fetched`);
@@ -110,6 +135,7 @@ class _Calendar {
           return { ...prev, [next.id]: { ...next } };
         }, {} as CalendarEvents);
       }
+      this.status = "started";
       this.unSuscribe = setInterval(() => {
         console.log(
           `[${moment().format()}] Refresh rate ${this.interval / 1000} seconds`
