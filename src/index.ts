@@ -1,27 +1,26 @@
 import { Client, GatewayIntentBits } from "discord.js";
 import "dotenv/config";
-import { tezosStart } from "./api/contract";
+import { calendar } from "./calendar";
 import events from "./events";
 
 const start = async () => {
   try {
-    const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-    const tezos = tezosStart();
-
-    // When the client is ready, run this code (only once)
-    const extra = { tezos };
+    const client = new Client({
+      intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.DirectMessages,
+      ],
+    });
     events.forEach((event) => {
       if (event.once) {
         client.once(event.name, (interaction) => event.execute(interaction));
       } else {
-        client.on(event.name, (interaction) =>
-          event.execute(interaction, extra)
-        );
+        client.on(event.name, (interaction) => event.execute(interaction));
       }
     });
-
-    // Login to Discord with your client's token
     client.login(process.env.TOKEN);
+    calendar.start(client);
   } catch (error) {
     console.log(error);
   }

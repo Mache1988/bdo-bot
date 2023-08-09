@@ -2,7 +2,9 @@ import { Routes } from "discord.js";
 import { REST } from "@discordjs/rest";
 import "dotenv/config";
 
-const rest = new REST({ version: "10" }).setToken(process.env.TOKEN as string);
+const rest = new REST(/*{ version: "10" }*/).setToken(
+  process.env.TOKEN as string
+);
 
 rest
   .delete(

@@ -3,7 +3,9 @@ import { REST } from "@discordjs/rest";
 import "dotenv/config";
 import commands from "./commands";
 
-const rest = new REST({ version: "10" }).setToken(process.env.TOKEN as string);
+const rest = new REST(/*{ version: "10" }*/).setToken(
+  process.env.TOKEN as string
+);
 
 rest
   .put(Routes.applicationCommands(process.env.CLIENT_ID as string), {

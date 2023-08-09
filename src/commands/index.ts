@@ -1,12 +1,15 @@
 import { Collection } from "discord.js";
-import Wanted from "./wanted";
+
 import { command } from "./types";
-import Holders from "./holders";
-import Say from "./say";
+
+import Add from "./add";
+import Show from "./show";
+import Remove from "./remove";
 
 const commands = new Collection<string, command>();
-commands.set(Wanted.data.name, Wanted);
-commands.set(Holders.data.name, Holders);
-commands.set(Say.data.name, Say);
+
+commands.set(Add.data.name, Add);
+commands.set(Show.data.name, Show);
+commands.set(Remove.data.name, Remove);
 
 export default commands;
