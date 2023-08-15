@@ -1,9 +1,11 @@
 {
   "scripts": {
-    "start": "ts-node lib/index.ts",
-    "deploy": "ts-node lib/deployCommands.ts",
-    "reset": "ts-node lib/resetCommands.ts",
-    "delete": "ts-node lib/deleteCommand.ts"
+    "start": "node build/index.js",
+    "deploy": "node build/deployCommands.js",
+    "reset": "node build/resetCommands.js",
+    "build": "tsc",
+    "prod": "git pull && npm install && tsc && node build/index.js",
+    "dev": "tsc && node build/index.js"
   },
   "devDependencies": {
     "@types/node": "^17.0.23",
@@ -14,7 +16,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.4",
     "prettier": "^2.6.2",
-    "typescript": "^4.6.3"
+    "typescript": "^5.3.0-dev.20230809"
   },
   "dependencies": {
     "@discordjs/builders": "^1.1.0",
@@ -25,7 +27,6 @@
     "discord.js": "^14.12.1",
     "dotenv": "^16.0.1",
     "moment": "^2.29.3",
-    "mongodb": "^5.7.0",
-    "ts-node": "^10.7.0"
+    "mongodb": "^5.7.0"
   }
 }

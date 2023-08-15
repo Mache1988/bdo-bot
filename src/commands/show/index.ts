@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from "discord.js";
 import moment from "moment";
 import { calendar } from "../../calendar";
+import formatTime from "../../calendar/formatTime";
 import { command } from "../types";
 
 const Show: command = {
@@ -25,13 +26,30 @@ const Show: command = {
       const guildID = interaction.guildId as string;
       if (id !== undefined) {
         if (id === "all") {
-          await interaction.reply({
-            embeds: calendar.list(guildID).map((e) => calendar.embed(e, e.id)),
-          });
+          const allEvents = calendar.list(guildID);
+          if (allEvents.length > 0) {
+            await interaction.reply({
+              embeds: allEvents.map((e) => calendar.embed(e, e.id)),
+            });
+          } else {
+            await interaction.reply({
+              content: `NO HAY EVENTOS`,
+            });
+          }
         } else {
           const e = calendar.event(id, guildID);
           if (e !== null) {
+            const dia = moment
+              .unix(e.notificateAt)
+              .utcOffset(e.data.utc)
+              .format("dddd D")
+              .toUpperCase();
+            const hora = formatTime(e.data.hour - 1, e.data.utc);
+
             await interaction.reply({ embeds: [calendar.embed(e, id)] });
+            await interaction.followUp({
+              content: `# PROXIMA NOTIFICACIÓN\r## ${dia}\r${hora}`,
+            });
           } else {
             await interaction.reply({
               content: `NO EXISTE EL EVENT CON ID ${id}`,
@@ -39,12 +57,12 @@ const Show: command = {
           }
         }
       } else {
-        const result = calendar
+        const todayEvents = calendar
           .list(guildID)
           .filter((e) => e.data.day === moment().utcOffset(e.data.utc).day());
-        if (result.length > 0) {
+        if (todayEvents.length > 0) {
           await interaction.reply({
-            embeds: result.map((e) => calendar.embed(e, e.id)),
+            embeds: todayEvents.map((e) => calendar.embed(e, e.id)),
           });
         } else {
           await interaction.reply({

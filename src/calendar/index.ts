@@ -139,7 +139,7 @@ class CalendarBot {
       this.status = "started";
       this.unSuscribe = setInterval(() => {
         console.log(
-          `[${moment().format()}] Refresh rate ${this.interval / 1000} seconds`
+          `[${moment().format()}] Running rate: ${this.interval / 1000}S`
         );
         this.run();
       }, this.interval);
@@ -160,12 +160,12 @@ class CalendarBot {
       const date = moment().utcOffset(e.data.utc).unix();
       const day = moment().utcOffset(e.data.utc).day();
       if (e.data.day === day) {
-        console.log(`Current date: ${date} [${moment.unix(date).format()}]`);
+        /*console.log(`Current date: ${date} [${moment.unix(date).format()}]`);
         console.log(
           `Notification date: ${e.notificateAt} [${moment
             .unix(e.notificateAt)
             .format()}]`
-        );
+        );*/
         if (e.notificateAt <= date) {
           const nextEvent = {
             ...e,

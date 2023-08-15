@@ -1,3 +1,4 @@
+import "moment/locale/es";
 import {
   APIEmbedField,
   EmbedBuilder,
@@ -7,6 +8,7 @@ import {
 import moment from "moment";
 import formatTime from "./formatTime";
 import { CalendarEvent, WarRole, WEEK } from "./types";
+moment.locale("es");
 const DEFAULT_IMAGE =
   "https://s1.pearlcdn.com/NAEU/Upload/WALLPAPER/80443869fe120221026113658506.jpg";
 const CustomizeEmbed = (e: CalendarEvent, id: string, footer?: string) => {
@@ -71,11 +73,6 @@ const CustomizeEmbed = (e: CalendarEvent, id: string, footer?: string) => {
     .setDescription(
       "Lista de participación para la node, favor de responder responsablemente."
     )
-    .addFields({
-      name: underscore("NOTIFICA"),
-      value: moment.unix(e.notificateAt).utcOffset(e.data.utc).format(),
-    })
-    .addFields({ name: "\r", value: "\r" })
     .addFields(
       { name: underscore("#ID"), value: id, inline: true },
       {
